@@ -110,9 +110,11 @@ class ChatApp(QtWidgets.QWidget):
         self.message_entry.setWordWrapMode(QtGui.QTextOption.WordWrap)  # Abilita il ritorno a capo automatico
         self.input_layout.addWidget(self.message_entry)
 
-        # Pulsante di invio
-        self.send_button = QtWidgets.QPushButton("Send", self.chat_frame)
-        self.send_button.setStyleSheet("background: lightblue; border-radius: 10px;")
+        # Pulsante di invio con immagine
+        self.send_button = QtWidgets.QPushButton(self.chat_frame)
+        self.send_button.setStyleSheet("background: transparent; border: none;")
+        self.send_button.setIcon(QtGui.QIcon("/home/endrx/Scrivania/codes/skorpion/ai/send.png"))  # Aggiungi l'immagine al pulsante
+        self.send_button.setIconSize(QtCore.QSize(30, 30))  # Imposta la dimensione dell'icona
         self.send_button.clicked.connect(self.send_message)
         self.input_layout.addWidget(self.send_button)
 
