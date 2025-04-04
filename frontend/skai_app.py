@@ -66,7 +66,7 @@ class ChatApp(QtWidgets.QWidget):
 
         # Immagine rotonda
         self.image_label = RoundImageLabel(self)
-        self.image_pixmap = QtGui.QPixmap("/home/endrx/Scrivania/codes/skorpion/ai/skai.png").scaled(56, 56, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+        self.image_pixmap = QtGui.QPixmap("/home/kuser/skai/app/skai.png").scaled(56, 56, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
         self.image_label.setPixmap(self.image_pixmap)
         self.image_label.setFixedSize(56, 56)
         self.image_label.setStyleSheet("background: transparent;")
@@ -113,7 +113,7 @@ class ChatApp(QtWidgets.QWidget):
         # Pulsante di invio
         self.send_button = QtWidgets.QPushButton(self.chat_frame)
         self.send_button.setStyleSheet("background: transparent; border: none;")
-        self.send_button.setIcon(QtGui.QIcon("/home/endrx/Scrivania/codes/skorpion/ai/send.png"))
+        self.send_button.setIcon(QtGui.QIcon("/home/kuser/skai/app/send.png"))
         self.send_button.setIconSize(QtCore.QSize(30, 30))
         self.send_button.clicked.connect(self.send_message)
         self.input_layout.addWidget(self.send_button)
