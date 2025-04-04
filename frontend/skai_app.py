@@ -6,22 +6,17 @@ class RoundImageLabel(QtWidgets.QLabel):
         super().__init__(parent)
 
     def setPixmap(self, pixmap):
-        # Crea una maschera circolare
         size = min(pixmap.width(), pixmap.height())  # Imposta la dimensione minore come lato del cerchio
         mask = QtGui.QBitmap(pixmap.size())
         mask.fill(QtCore.Qt.white)
 
-        # Disegna un cerchio sulla maschera
         painter = QtGui.QPainter(mask)
         painter.setBrush(QtCore.Qt.black)
         painter.setPen(QtCore.Qt.black)
-        painter.drawEllipse(0, 0, size, size)  # Assicuriamo che la maschera sia un cerchio
+        painter.drawEllipse(0, 0, size, size)
         painter.end()
 
-        # Applica la maschera all'immagine
         pixmap.setMask(mask)
-
-        # Imposta la pixmap
         super().setPixmap(pixmap)
 
 class ChatApp(QtWidgets.QWidget):
@@ -38,7 +33,7 @@ class ChatApp(QtWidgets.QWidget):
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
 
-        # Layout per la barra superiore (per menu e titolo)
+        # Layout per la barra superiore
         self.top_bar = QtWidgets.QHBoxLayout()
         self.top_bar.setContentsMargins(10, 10, 10, 10)
         self.layout.addLayout(self.top_bar)
@@ -46,42 +41,40 @@ class ChatApp(QtWidgets.QWidget):
         # Spacer per spostare il pulsante menu nell'angolo in alto a destra
         self.top_bar.addStretch()
 
-        # Pulsante per il menu (fissato nell'angolo in alto a destra)
+        # Pulsante per il menu
         self.menu_button = QtWidgets.QPushButton("☰", self)
         self.menu_button.setStyleSheet("background-color: transparent; color: white; font-size: 20px; border: none;")
         self.menu_button.clicked.connect(self.toggle_chat)
         self.top_bar.addWidget(self.menu_button)
 
-        # Pannello di chat (sfondo trasparente, elementi visibili)
+        # Pannello di chat
         self.chat_frame = QtWidgets.QFrame(self)
         self.chat_frame.setStyleSheet("background: rgba(169, 169, 169, 0.8); border-radius: 10px;")
         self.layout.addWidget(self.chat_frame)
 
-        # Layout per la chat
+        # Layout della chat
         self.chat_layout = QtWidgets.QVBoxLayout(self.chat_frame)
         self.chat_layout.setContentsMargins(10, 10, 10, 10)
 
-        # Crea un layout orizzontale per l'immagine e il titolo
+        # Layout per l'immagine e il titolo
         image_and_title_layout = QtWidgets.QHBoxLayout()
-        image_and_title_layout.setContentsMargins(0, 0, 0, 0)  # Rimuove i margini esterni
-        image_and_title_layout.setSpacing(80)  # Distanza di 30px tra immagine e titolo
+        image_and_title_layout.setContentsMargins(0, 0, 0, 0)
+        image_and_title_layout.setSpacing(10)
 
         # Immagine rotonda
         self.image_label = RoundImageLabel(self)
         self.image_pixmap = QtGui.QPixmap("/home/endrx/Scrivania/codes/skorpion/ai/skai.png").scaled(56, 56, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
         self.image_label.setPixmap(self.image_pixmap)
         self.image_label.setFixedSize(56, 56)
-        self.image_label.setStyleSheet("background: transparent;")  # Rimuove lo sfondo dietro l'immagine
+        self.image_label.setStyleSheet("background: transparent;")
         image_and_title_layout.addWidget(self.image_label)
 
         # Etichetta del titolo
         self.title_label = QtWidgets.QLabel("Skai", self.chat_frame)
         self.title_label.setStyleSheet("color: white; font-size: 18px; font-weight: bold; background: transparent;")
-
-        # Allinea verticalmente il testo al centro rispetto all'immagine
         image_and_title_layout.addWidget(self.title_label, alignment=QtCore.Qt.AlignVCenter)
 
-        # Aggiungi il layout orizzontale (contenente l'immagine e il titolo) al layout della chat
+        # Aggiungi al layout
         self.chat_layout.addLayout(image_and_title_layout)
 
         # Area per i messaggi
@@ -92,43 +85,43 @@ class ChatApp(QtWidgets.QWidget):
         # Contenitore per i messaggi
         self.messages_area_widget = QtWidgets.QWidget()
         self.messages_area_content = QtWidgets.QVBoxLayout(self.messages_area_widget)
-        self.messages_area_content.setContentsMargins(0, 0, 0, 0)  # Rimuove margini extra
-        self.messages_area_content.setSpacing(5)  # Spazio tra i messaggi
+        self.messages_area_content.setContentsMargins(0, 0, 0, 0)
+        self.messages_area_content.setSpacing(5)
+        self.messages_area_content.setAlignment(QtCore.Qt.AlignTop)  # Allinea in alto
+
+        # Spacer per mantenere i messaggi in alto
+        self.spacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.messages_area_content.addSpacerItem(self.spacer)
 
         self.messages_area.setWidget(self.messages_area_widget)
         self.chat_layout.addWidget(self.messages_area)
 
-        # Layout per l'inserimento del messaggio e il pulsante di invio
+        # Layout per input e pulsante invio
         self.input_layout = QtWidgets.QHBoxLayout()
         self.chat_layout.addLayout(self.input_layout)
 
         # Campo di input per il messaggio
         self.message_entry = QtWidgets.QTextEdit(self.chat_frame)
         self.message_entry.setStyleSheet("background: rgba(200, 200, 200, 0.8); border-radius: 10px;")
-        self.message_entry.setPlaceholderText("Scrivi a Skorpion ai...")
+        self.message_entry.setPlaceholderText("Scrivi a Skorpion AI...")
         self.message_entry.setFixedHeight(50)
-        self.message_entry.setWordWrapMode(QtGui.QTextOption.WordWrap)  # Abilita il ritorno a capo automatico
         self.input_layout.addWidget(self.message_entry)
 
-        # Pulsante di invio con immagine
+        # Pulsante di invio
         self.send_button = QtWidgets.QPushButton(self.chat_frame)
         self.send_button.setStyleSheet("background: transparent; border: none;")
-        self.send_button.setIcon(QtGui.QIcon("/home/endrx/Scrivania/codes/skorpion/ai/send.png"))  # Aggiungi l'immagine al pulsante
-        self.send_button.setIconSize(QtCore.QSize(30, 30))  # Imposta la dimensione dell'icona
+        self.send_button.setIcon(QtGui.QIcon("/home/endrx/Scrivania/codes/skorpion/ai/send.png"))
+        self.send_button.setIconSize(QtCore.QSize(30, 30))
         self.send_button.clicked.connect(self.send_message)
         self.input_layout.addWidget(self.send_button)
 
-        # Gestione della pressione del tasto Enter per inviare il messaggio
+        # Tasto Enter per inviare
         self.message_entry.installEventFilter(self)
 
         self.is_chat_visible = True
-        self.chat_frame.setVisible(True)
 
     def toggle_chat(self):
-        if self.is_chat_visible:
-            self.chat_frame.hide()
-        else:
-            self.chat_frame.show()
+        self.chat_frame.setVisible(not self.is_chat_visible)
         self.is_chat_visible = not self.is_chat_visible
 
     def send_message(self):
@@ -147,14 +140,16 @@ class ChatApp(QtWidgets.QWidget):
         message_widget.setWordWrap(True)
         message_widget.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
         message_widget.setMinimumWidth(100)
-        self.messages_area_content.addWidget(message_widget)
 
-        # Scorri fino in fondo all'area dei messaggi
+        # Inserisci il messaggio prima dello spacer
+        self.messages_area_content.insertWidget(self.messages_area_content.count() - 1, message_widget)
+
+        # Scorri in fondo per mostrare il nuovo messaggio
         self.messages_area.verticalScrollBar().setValue(self.messages_area.verticalScrollBar().maximum())
 
     def eventFilter(self, obj, event):
         if obj is self.message_entry and event.type() == QtCore.QEvent.KeyPress:
-            if event.key() == QtCore.Qt.Key_Return:
+            if event.key() == QtCore.Qt.Key_Return and not event.modifiers() & QtCore.Qt.ShiftModifier:
                 self.send_message()
                 return True
         return super().eventFilter(obj, event)
