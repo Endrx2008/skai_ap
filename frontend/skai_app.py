@@ -1,4 +1,6 @@
 import sys
+import requests
+import json
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 class RoundImageLabel(QtWidgets.QLabel):
@@ -134,9 +136,6 @@ class ChatApp(QtWidgets.QWidget):
             self.message_entry.clear()
             self.get_response(message)
 
-    def get_response(self, message):
-        self.add_message("Skai: " + message, "#B0EFFF")
-
     def add_message(self, text, color):
         message_widget = QtWidgets.QLabel(text)
         message_widget.setStyleSheet(f"background: {color}; border-radius: 10px; padding: 5px; margin: 5px;")
@@ -156,6 +155,33 @@ class ChatApp(QtWidgets.QWidget):
                 self.send_message()
                 return True
         return super().eventFilter(obj, event)
+
+    def get_response(self, message):
+        payload = {
+            'input': message,  # The input message
+            'context': ""      # Optional, depending on Ollama's API requirement
+        }
+
+        headers = {
+            'Content-Type': 'application/json'
+        }
+
+        try:
+            # Send POST request to Ollama's local API
+            response = requests.post("http://localhost:5000/chat", data=json.dumps(payload), headers=headers)
+            
+            # If the response is successful, parse the response
+            if response.status_code == 200:
+                response_data = response.json()  # Assuming response is in JSON
+                ollama_reply = response_data.get('reply', 'Sorry, I couldn\'t get a response.')
+
+                # Add the response to the chat
+                self.add_message("Skai: " + ollama_reply, "#B0EFFF")
+            else:
+                self.add_message("Skai: Error communicating with Ollama API.", "#FF0000")
+        except Exception as e:
+            self.add_message("Skai: Failed to connect to Ollama API.", "#FF0000")
+            print(f"Error: {e}")
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
