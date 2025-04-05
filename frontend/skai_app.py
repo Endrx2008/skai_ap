@@ -34,6 +34,9 @@ class ChatApp(QtWidgets.QWidget):
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
 
+        # Salva la larghezza originale della finestra
+        self.original_width = self.width()
+
         # Layout principale
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
@@ -126,7 +129,32 @@ class ChatApp(QtWidgets.QWidget):
         self.is_chat_visible = True
 
     def toggle_chat(self):
-        self.chat_frame.setVisible(not self.is_chat_visible)
+        if self.is_chat_visible:
+            # Nascondere gli elementi della chat (titolo, immagine, messaggi, input e pulsante di invio)
+            self.messages_area.setVisible(False)
+            self.message_entry.setVisible(False)
+            self.send_button.setVisible(False)
+
+            # Ridurre la larghezza della finestra di 150 pixel quando la chat viene nascosta
+            new_width = self.width() - 150
+            self.resize(new_width, self.height())  # Mantieni l'altezza e riduci la larghezza
+
+            # Riposizionare la finestra al lato destro dello schermo
+            screen = QtWidgets.QApplication.primaryScreen().geometry()
+            self.move(screen.width() - new_width, (screen.height() - self.height()) // 2)
+        else:
+            # Ripristinare la larghezza originale e mostrare gli elementi della chat
+            self.resize(self.original_width, self.height())  # Ripristina la larghezza originale
+
+            # Mostra tutti gli elementi della chat
+            self.messages_area.setVisible(True)
+            self.message_entry.setVisible(True)
+            self.send_button.setVisible(True)
+
+            # Riposizionare la finestra al lato destro dello schermo
+            screen = QtWidgets.QApplication.primaryScreen().geometry()
+            self.move(screen.width() - self.original_width, (screen.height() - self.height()) // 2)
+
         self.is_chat_visible = not self.is_chat_visible
 
     def send_message(self):
