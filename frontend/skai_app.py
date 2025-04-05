@@ -41,21 +41,7 @@ class ChatApp(QtWidgets.QWidget):
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
 
-        # Layout per la barra superiore
-        self.top_bar = QtWidgets.QHBoxLayout()
-        self.top_bar.setContentsMargins(10, 10, 10, 10)
-        self.layout.addLayout(self.top_bar)
-
-        # Spacer per spostare il pulsante menu nell'angolo in alto a destra
-        self.top_bar.addStretch()
-
-        # Pulsante per il menu
-        self.menu_button = QtWidgets.QPushButton("☰", self)
-        self.menu_button.setStyleSheet("background-color: transparent; color: white; font-size: 20px; border: none;")
-        self.menu_button.clicked.connect(self.toggle_chat)
-        self.top_bar.addWidget(self.menu_button)
-
-        # Pannello di chat
+        # Pannello di chat (frame grigio)
         self.chat_frame = QtWidgets.QFrame(self)
         self.chat_frame.setStyleSheet("background: rgba(169, 169, 169, 0.8); border-radius: 10px;")
         self.layout.addWidget(self.chat_frame)
@@ -64,7 +50,7 @@ class ChatApp(QtWidgets.QWidget):
         self.chat_layout = QtWidgets.QVBoxLayout(self.chat_frame)
         self.chat_layout.setContentsMargins(10, 10, 10, 10)
 
-        # Layout per l'immagine e il titolo
+        # Layout per la barra superiore (immagine, titolo, menu)
         image_and_title_layout = QtWidgets.QHBoxLayout()
         image_and_title_layout.setContentsMargins(0, 0, 0, 0)
         image_and_title_layout.setSpacing(10)
@@ -82,7 +68,16 @@ class ChatApp(QtWidgets.QWidget):
         self.title_label.setStyleSheet("color: white; font-size: 18px; font-weight: bold; background: transparent;")
         image_and_title_layout.addWidget(self.title_label, alignment=QtCore.Qt.AlignVCenter)
 
-        # Aggiungi al layout
+        # Spacer per spostare il pulsante verso destra
+        image_and_title_layout.addStretch()
+
+        # Pulsante per il menu
+        self.menu_button = QtWidgets.QPushButton("☰", self)
+        self.menu_button.setStyleSheet("background-color: transparent; color: white; font-size: 20px; border: none;")
+        self.menu_button.clicked.connect(self.toggle_chat)
+        image_and_title_layout.addWidget(self.menu_button)
+
+        # Aggiungi la barra superiore all'interno del layout della chat
         self.chat_layout.addLayout(image_and_title_layout)
 
         # Area per i messaggi
@@ -131,6 +126,7 @@ class ChatApp(QtWidgets.QWidget):
     def toggle_chat(self):
         if self.is_chat_visible:
             # Nascondere gli elementi della chat (titolo, immagine, messaggi, input e pulsante di invio)
+            self.title_label.setVisible(False)
             self.messages_area.setVisible(False)
             self.message_entry.setVisible(False)
             self.send_button.setVisible(False)
@@ -147,6 +143,7 @@ class ChatApp(QtWidgets.QWidget):
             self.resize(self.original_width, self.height())  # Ripristina la larghezza originale
 
             # Mostra tutti gli elementi della chat
+            self.title_label.setVisible(True)
             self.messages_area.setVisible(True)
             self.message_entry.setVisible(True)
             self.send_button.setVisible(True)
