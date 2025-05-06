@@ -102,10 +102,25 @@
       margin-bottom: 8px;
     }
     .user {
-      color: blue;
+      /* Keep label color blue */
+      color: inherit;
     }
     .bot {
-      color: green;
+      /* Keep label color red */
+      color: orangered;
+    }
+    .label {
+      font-weight: bold;
+    }
+    .text {
+      color: white;
+      font-weight: normal;
+    }
+    .bot .text {
+      color: white;
+    }
+    .hello-message .text {
+      color: gray;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -156,11 +171,11 @@
         color: #4ea1f3;
       }
       .bot {
-        color: #7ecb7e;
+        color: orangered;
       }
     }
     .hello-message {
-      color: #ccc;
+      color: gray;
       position: absolute;
       top: 10px;
       left: 50%;
@@ -177,6 +192,9 @@
 <body>
   <div id="container" style="position: relative;">
     <div id="chat"></div>
+    <div id="clearText" style="position: absolute; top: 15px; right: 10px; cursor: pointer; color: #a9a9a9; font-weight: bold; user-select: none; z-index: 20;">
+      clear
+    </div>
     <div id="inputArea">
       <input type="text" id="messageInput" placeholder="Chat with skai..." />
       <button id="sendButton" aria-label="Send">
