@@ -1,0 +1,56 @@
+#!/bin/bash
+clear
+
+base_prompt="Scrivi solo un comando, nessuna descrizione, nessun testo esterno, solo la traduzione della domanda in uno o una sequenza di comandi shell:"
+
+while true; do
+  echo -e "\033[1;34m┌──(Sk_ai ㉿terminal)-\033[0m\033[1;36m[Inserisci la tua richiesta]\033[0m"
+  read -rp $'\033[1;34m└─$\033[0m ' prompt
+
+  # Se input vuoto, continua il loop
+  if [ -z "$prompt" ]; then
+    echo -e "\033[1;31m[!] Nessun input fornito.\033[0m"
+    continue
+  fi
+
+  # Controlla se l'utente vuole uscire
+  if [[ "$prompt" == "exit" ]]; then
+    echo -e "\033[1;31m[*] Uscita dallo script.\033[0m"
+    exit 0
+  fi
+
+  # Costruisci il prompt completo
+  full_prompt="$base_prompt $prompt"
+
+  # Richiedi il comando a ollama
+  comando=$(echo "$full_prompt" | ollama run llama)
+  echo -e "\n\033[1;36m[+] Comando suggerito:\033[0m $comando" | tee /tmp/ai_response
+
+  # Loop di conferma
+  while true; do
+    echo -e "\033[1;33m┌──(Sk_ai ㉿skai)-[Eseguire il comando? y/n/s (spiega)]:\033[0m"
+    read -rp $'\033[1;33m└─>\033[0m ' scelta
+    scelta=${scelta,,}  # lowercase
+
+    case "$scelta" in
+      y|"")
+        echo -e "\033[1;32m[+] Eseguendo: $comando\033[0m"
+        eval "$comando"
+        break
+        ;;
+      n)
+        echo -e "\033[1;31m[-] Comando annullato.\033[0m"
+        break
+        ;;
+      s)
+        spiegazione="Spiega dettagliatamente cosa fa il seguente comando shell: $comando"
+        echo "$spiegazione" | ollama run llama
+        ;;
+      *)
+        echo -e "\033[1;35m[!] Scelta non valida. Riprova.\033[0m"
+        ;;
+    esac
+  done
+
+  echo    # Riga vuota per leggibilità
+done
