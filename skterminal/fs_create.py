@@ -1,0 +1,35 @@
+from config import SKAI_HOME, MAX_FILES
+from pathlib import Path
+
+
+def create_file(filename: str, content: str) -> str:
+    """
+    Creates a new file in skai_home with the given content.
+    - Supports subfolder paths like 'folder1/notes.txt'
+    - Appends .txt if the file has no extension.
+    - Rejects if MAX_FILES limit is reached.
+    - Rejects if the file already exists.
+    """
+    SKAI_HOME.mkdir(parents=True, exist_ok=True)
+
+    all_files = [f for f in SKAI_HOME.rglob("*") if f.is_file()]
+    if len(all_files) >= MAX_FILES:
+        return f"File limit of {MAX_FILES} reached. Delete something before creating new files."
+
+    rel = Path(filename)
+    parts = [p for p in rel.parts if p not in (".", "..")]
+    safe_rel = Path(*parts) if parts else Path(filename)
+
+    if not safe_rel.suffix:
+        safe_rel = safe_rel.with_suffix(".txt")
+
+    fp = SKAI_HOME / safe_rel
+
+    fp.parent.mkdir(parents=True, exist_ok=True)
+
+    if fp.exists():
+        return f"File '{safe_rel}' already exists. Use 'edit' if you want to change its content."
+
+    fp.write_text(content, encoding="utf-8")
+    count = len([f for f in SKAI_HOME.rglob("*") if f.is_file()])
+    return f"✅ File '{safe_rel}' created successfully. ({count}/{MAX_FILES} files in skai_home)"
